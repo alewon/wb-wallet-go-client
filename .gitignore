@@ -1,0 +1,16 @@
+bin/
+dist/
+coverage.out
+coverage.txt
+*.test
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+.idea/
+.vscode/
+
+.DS_Store
+Thumbs.db
