@@ -1,23 +1,11 @@
-# wb-wallet-go-client
+# Go-клиент для сервиса «WB кошелек»
 
 Минимальный Go-клиент для API WB Pay.
-
-В репозитории:
-- `client.go` — HTTP-клиент и все методы API
-- `types.go` — все request/response структуры, статусы и коды ошибок
-- `doc.md` — зафиксированная сводка по документации WB Pay
-
-## Возможности
-
-- покрывает все 24 метода из опубликованной документации API WB Pay
-- содержит отдельные структуры для каждого метода без унификации
-- не выполняет валидацию входных данных
-- возвращает разбор ответов `200`, `400` и `403`
 
 ## Установка
 
 ```bash
-go get wb-wallet-go-client
+go get github.com/alewon/wb-wallet-go-client.git
 ```
 
 Минимальная версия Go: `1.18`.
@@ -49,9 +37,12 @@ func main() {
 		"ru-mow",
 	)
 
-	result, err := client.DoOnlinePaymentByPhone(context.Background(), &wbwallet.DoOnlinePaymentByPhoneRequest{
-		Body: wbwallet.DoOnlinePaymentByPhoneRequestBody{
-			OrderID: "order-id",
+	result, err := client.GeneratePayerToken(context.Background(), &wbwallet.GeneratePayerTokenRequest{
+		Body: wbwallet.GeneratePayerTokenRequestBody{
+			TerminalID:  "terminal-id",
+			PhoneNumber: "79991234567",
+			CreatedAt:   1752057656,
+			ClientID:    "client-id",
 		},
 	})
 	if err != nil {
@@ -59,30 +50,18 @@ func main() {
 	}
 
 	if result.OK != nil {
-		fmt.Println(result.OK.Data.DeepLink)
+		fmt.Println(result.OK.Data.RegistrationID)
 	}
 }
 ```
 
-Если в `Client` заданы токен, ключ и региональные заголовки, клиент автоматически:
-- добавляет `Authorization: Bearer ...`
-- добавляет `Content-Type: application/json`
-- добавляет `X-Request-Country` и `X-Request-Region`
-- генерирует `X-Signature` для методов с body-подписью
-- подставляет `X-Wbpay-Id`, если его можно вывести из request
+## Что умеет клиент
 
-## Статус проекта
-
-Проект генерировался по публичной документации WB Pay и задуман как прозрачная тонкая обёртка над HTTP API.
-
-Если документация WB Pay изменится, структуры и методы в этом репозитории нужно будет обновить вручную.
-
-## Разработка
-
-```bash
-gofmt -w client.go types.go
-go test ./...
-```
+- реализует все методы из публичной документации WB Pay
+- содержит все request/response структуры
+- автоматически подставляет `Authorization`
+- автоматически генерирует `X-Signature` через `ED25519`
+- автоматически подставляет `X-Request-Country`, `X-Request-Region` и `X-Wbpay-Id`, когда это возможно
 
 ## Лицензия
 
