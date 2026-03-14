@@ -3,7 +3,7 @@
 ## Установка
 
 ```bash
-go get github.com/alewon/wb-wallet-go-client.git
+go get github.com/alewon/wb-wallet-go-client
 ```
 
 ## Использование
@@ -15,7 +15,7 @@ import (
 	"context"
 	"fmt"
 
-	wbwallet "github.com/alewon/wb-wallet-go-client.git"
+	wbwallet "github.com/alewon/wb-wallet-go-client"
 )
 
 func main() {
